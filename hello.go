@@ -2,10 +2,27 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 )
 
+type Writer interface {
+	Write([]byte) (int, error)
+}
+type StringWriter struct {
+	str string
+}
+
+func (sw *StringWriter) Write(data []byte) (int, error) {
+	sw.str += string(data)
+	return len(data), nil
+}
+
 func main() {
+	var w Writer = &StringWriter{}
+	sw := w.(*StringWriter)
+	sw.str = "hello world Writer"
+	println(sw.str)
 	var stockcode = 123
 	var enddate = "2023-04-05"
 	var url = "Code=%d&endDate=%s"
@@ -20,6 +37,159 @@ func main() {
 	getArray()
 	getPointer()
 	getStruct()
+	getArraySplit()
+	getRange()
+	getMap()
+	getRecurise()
+	getTypeRevert()
+	getThread()
+}
+
+func getThread() {
+	say := func(s string) {
+		for i := 0; i < 5; i++ {
+			time.Sleep(100 * time.Microsecond)
+			println(s)
+		}
+	}
+	go say("has thread")
+	say("no thread")
+
+	sum := func(s []int, c chan int) {
+		sum := 0
+		for _, v := range s {
+			sum += v
+		}
+		c <- sum
+	}
+
+	s := []int{1, 2, 3, 4, 5, 9, 8}
+	c := make(chan int)
+	go sum(s[:len(s)/2], c)
+	go sum(s[len(s)/2:], c)
+	x, y := <-c, <-c
+	println("x,y,value", x, y, x+y)
+
+	fibonacci := func(n int, c chan int) {
+		x, y := 0, 1
+		for i := 0; i < n; i++ {
+			c <- x
+			x, y = y, x+y
+		}
+		close(c)
+	}
+
+	cdd := make(chan int, 10)
+	go fibonacci(cap(cdd), cdd)
+	for i := range cdd {
+		println(i)
+	}
+}
+
+func getTypeRevert() {
+	var sum int = 17
+	var count int = 5
+	var mean float32
+	mean = float32(sum) / float32(count)
+	fmt.Printf("mean的值为: %f\n", mean)
+
+	str := "123"
+	num, err := strconv.Atoi(str)
+	if err != nil {
+		println("revert error:", err)
+	} else {
+		println("revert success:", str, num)
+	}
+
+	var i interface{} = "hello world"
+	str, ok := i.(string)
+	if ok {
+		println("It is a string", str)
+	} else {
+		println("conversion failed")
+	}
+
+}
+
+func factorial(n uint64) (result uint64) {
+	if n > 0 {
+		result = n * factorial(n-1)
+		return result
+	}
+	return 1
+}
+
+func getRecurise() {
+	var i int = 15
+	fmt.Printf("%d的阶乘为%d\n", i, factorial(uint64(i)))
+}
+func getMap() {
+	var siteMap map[string]string
+	siteMap = make(map[string]string)
+	siteMap["Google"] = "google value"
+	siteMap["Baidu"] = "Baidu value"
+
+	for key, value := range siteMap {
+		println("key", key, "value", value)
+	}
+
+	name, ok := siteMap["Google"]
+	if ok {
+		println("Google is exist", name, ok)
+	} else {
+		println("Google is not exist")
+	}
+
+	countryMap := map[string]string{
+		"china":   "beijing",
+		"america": "houshengdun",
+	}
+	delete(countryMap, "china")
+	println(countryMap["china"])
+
+}
+
+func getRange() {
+	map1 := make(map[int]float32)
+	map1[1] = 1.0
+	map1[2] = 2.0
+	map1[3] = 3.0
+	map1[4] = 4.0
+	map1[5] = 5.0
+
+	for key, value := range map1 {
+		fmt.Printf("key is %d - value is %f\n", key, value)
+	}
+
+	for key := range map1 {
+		fmt.Printf("key is %d\n", key)
+	}
+
+	for _, value := range map1 {
+		fmt.Printf("key is %f\n", value)
+	}
+
+}
+
+func getArraySplit() {
+	var printSlice = func(x []int) {
+		fmt.Printf("len=%d cap=%d slice=%v\n", len(x), cap(x), x)
+	}
+	var nums = make([]int, 3, 5)
+	printSlice(nums)
+
+	var nums2 []int
+	nums2 = append(nums2, 0)
+	printSlice(nums2)
+	nums2 = append(nums2, 1)
+	printSlice(nums2)
+	nums2 = append(nums2, 2, 3, 4)
+	printSlice(nums2)
+	nums3 := make([]int, len(nums2), (cap(nums2) * 2))
+	printSlice(nums3)
+	copy(nums3, nums2)
+	printSlice(nums3)
+
 }
 
 func getStruct() {
