@@ -18,6 +18,42 @@ func main() {
 	getCycle()
 	getFunction()
 	getArray()
+	getPointer()
+	getStruct()
+}
+
+func getStruct() {
+	type Books struct {
+		title   string
+		author  string
+		subject string
+		book_id int
+	}
+
+	var book1 Books
+	book1.title = "GO语言"
+	book1.author = "www.mengxiangyu.com"
+	book1.subject = "hello-go"
+	book1.book_id = 22222
+
+	var printBook = func(book *Books) {
+		println("book title is %s", book.title)
+		println("book author is %s", book.author)
+		println("book subject is %s", book.subject)
+		println("book book_id is %s", book.book_id)
+	}
+	printBook(&book1)
+}
+
+func getPointer() {
+	var a int = 20
+	var ip *int
+	ip = &a
+	println("a address is %d", &a)
+
+	println("ip address is %d", ip)
+
+	println("*ip address is %d", *ip)
 }
 
 func getArray() {
