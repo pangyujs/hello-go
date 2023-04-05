@@ -16,6 +16,24 @@ func main() {
 	getCalculate()
 	getCondition()
 	getCycle()
+	getFunction()
+	getArray()
+}
+
+func getArray() {
+	var arr = []int{1, 2, 3, 3, 4}
+	fmt.Println(arr[1])
+}
+
+func getFunction() {
+	getMax := func(a int, b int) int {
+		if a > b {
+			return a
+		} else {
+			return b
+		}
+	}
+	println(getMax(1, 2))
 }
 
 func getCycle() {
