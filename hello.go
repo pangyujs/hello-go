@@ -35,6 +35,28 @@ func getCycle() {
 		println(i, x)
 	}
 
+	// break
+	a := 10
+	for a < 20 {
+		println("a====%d", a)
+		a++
+		if a > 15 {
+			break
+		}
+	}
+
+	// goto
+	var s int = 10
+LOOP:
+	for s < 20 {
+		if s == 15 {
+			s = s + 1
+			goto LOOP
+		}
+		println("s======%d", s)
+		s++
+	}
+
 	c1 := make(chan string)
 	c2 := make(chan string)
 
